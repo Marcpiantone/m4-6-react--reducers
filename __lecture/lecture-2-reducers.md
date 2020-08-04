@@ -309,20 +309,38 @@ const LightSwitch = () => {
 
 ```jsx
 // Exercise 2
+function reducer = (state, action) => {
+switch (action.type) {
+  case "REQUEST_DATA": {
+    return "loading";
+  }
+  case "RECEIVE-DATA" :{
+    return "idle";
+  }
+  case "RECEIVE-ERROR" :{
+    return "error";
+  }
+}
+default: throw new Error("unrecognized action"  )
+}
+
+const [state, dispatch] = useReducer(reducer, initialState);
+
 function App() {
-  const [status, setStatus] = React.useState("idle");
+const [state, dispatch] = useReducer(reducer, "idle");
+
 
   return (
     <form
       onSubmit={() => {
-        setStatus("loading");
+        dispatch({type: "REQUEST-DATA"});
 
         getStatusFromServer()
           .then(() => {
-            setStatus("idle");
+            dispatch(({type: "RECEIVE-DATA"}));
           })
           .catch(() => {
-            setStatus("error");
+           dispatch(({type: "RECEIVE-ERROR"}));
           });
       }}
     >
@@ -503,20 +521,36 @@ Update these objects to use `useReducer`, with a single immutable object
 
 ```jsx
 // Exercise 4
+
+const initialState = {points: 0,status: "idle"}
+
+const reducer = (state, action) => {
+
+  switch (action.type) {
+    case "INCREMENT-POINTS" : return {...state, points+1}
+    case "DECREMENT-POINTS" : return {...state, points-1}
+    case "START-GAME" : return {points=0, status:"Playing"}
+  }
+  default:   return state;
+
+
+}
+
+
 const Game = () => {
-  const [points, setPoints] = React.useState(0);
-  const [status, setStatus] = React.useState("idle");
+   const [state, dispatch] = React.useReducer(reducer, initialState);
+
 
   return (
     <>
-      Your score: {points}.
-      {status === "playing" && (
+      Your score: {state.points}.
+      {state.status === "playing" && (
         <>
-          <button onClick={() => setPoints(points + 1)}>🍓</button>
-          <button onClick={() => setPoints(points - 1)}>💀</button>
+          <button onClick={() => dispatch({type:"INCREMENT-POINTS"})}>🍓</button>
+          <button onClick={() => dispatch({type:"DECREMENT-POINTS"})}>💀</button>
         </>
       )}
-      <button onClick={() => setStatus("playing")}>Start game</button>
+      <button onClick={() => dispatch({type:"START-GAME"})}>Start game</button>
     </>
   );
 };
@@ -531,37 +565,54 @@ const Game = () => {
 import sendDataToServer from "./some-madeup-place";
 import FormField from "./some-other-madeup-place";
 
+const initialState = { firstName: "", LastName: "", email: "" };
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "UPDATE-FIRSTNAME":
+      return { ...state, firstName: action.value };
+    case "UPDATE-LASTNAME":
+      return { ...state, lastName: action.value };
+    case "UPDATE-EMAIL":
+      return { ...state, email: action.value };
+    case "RESET":
+      return initialState;
+  }
+  return state;
+};
+
 const SignUpForm = () => {
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [email, setEmail] = React.useState("");
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <form onSubmit={sendDataToServer}>
       <FormField
         label="First Name"
         value={firstName}
-        onChange={(ev) => setFirstName(ev.target.value)}
+        onChange={(ev) =>
+          dispatch({ type: "UPDATE-FIRSTNAME", value: ev.target.value })
+        }
       />
       <FormField
         label="Last Name"
         value={lastName}
-        onChange={(ev) => setLastName(ev.target.value)}
+        onChange={(ev) =>
+          dispatch({ type: "UPDATE-LASTNAME", value: ev.target.value })
+        }
       />
       <FormField
         label="Email"
         value={email}
-        onChange={(ev) => setEmail(ev.target.value)}
+        onChange={(ev) =>
+          dispatch({ type: "UPDATE-EMAIL", value: ev.target.value })
+        }
       />
 
       <button>Submit</button>
       <button
         onClick={(ev) => {
           ev.preventDefault();
-
-          setFirstName("");
-          setLastName("");
-          setEmail("");
+          dispatch({ type: "RESET" });
         }}
       >
         Reset
