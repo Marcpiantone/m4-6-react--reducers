@@ -1,4 +1,4 @@
-import react, { createContext, useReducer } from "react";
+import React, { createContext, useReducer } from "react";
 
 export const SeatContext = createContext();
 
@@ -10,6 +10,18 @@ const initialState = {
 };
 
 function reducer(state, action) {
+  console.log(action);
+  switch (action.type) {
+    case "receive-seat-info-from-server":
+      return {
+        ...state,
+        hasLoaded: true,
+        seats: action.seats,
+        numOfRows: action.numOfRows,
+        seatsPerRow: action.seatsPerRow,
+      };
+  }
+  return state;
   //TODO
 }
 
