@@ -22,7 +22,6 @@ function reducer(state, action) {
       };
   }
   return state;
-  //TODO
 }
 
 export const SeatProvider = ({ children }) => {

@@ -40,6 +40,7 @@ const TicketWidget = () => {
                         isBooked={seat.isBooked}
                         row={rowName}
                         seatNum={num}
+                        seatId={seatId}
                         price={seat.price}
                       />
                     </SeatWrapper>

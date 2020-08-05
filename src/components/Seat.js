@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ReactComponent as SeatAvailable } from "../assets/seat-available.svg";
 import styled from "styled-components";
 
 import Tippy from "@tippyjs/react";
 
-const Seat = ({ isBooked, row, seatNum, price }) => {
+import { BookingContext } from "./BookingContext";
+
+const Seat = ({ isBooked, row, seatNum, seatId, price }) => {
   const tip = `Row ${row} Seat ${seatNum} - ${price}$`;
+
+  const {
+    actions: { beginBookingProcess },
+  } = useContext(BookingContext);
 
   return (
     <ToolTip content={tip}>
-      <SeatButton disabled={isBooked}>
+      <SeatButton
+        disabled={isBooked}
+        onClick={() => {
+          beginBookingProcess({ seatId, price });
+        }}
+      >
         <SEAT isBooked={isBooked} />
       </SeatButton>
     </ToolTip>
