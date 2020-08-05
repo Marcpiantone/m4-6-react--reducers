@@ -9,7 +9,9 @@ const Seat = ({ isBooked, row, seatNum, price }) => {
 
   return (
     <ToolTip content={tip}>
-      <SEAT isBooked={isBooked} />
+      <SeatButton disabled={isBooked}>
+        <SEAT isBooked={isBooked} />
+      </SeatButton>
     </ToolTip>
   );
 };
@@ -20,6 +22,11 @@ const SEAT = styled(SeatAvailable)`
 
 const ToolTip = styled(Tippy)`
   background: black;
+`;
+
+const SeatButton = styled.button`
+  outline: none;
+  border: none;
 `;
 
 export default Seat;
