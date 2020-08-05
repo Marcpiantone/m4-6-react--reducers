@@ -25,7 +25,6 @@ const ToolTip = styled(Tippy)`
 `;
 
 const SeatButton = styled.button`
-  outline: none;
   border: none;
 `;
 
