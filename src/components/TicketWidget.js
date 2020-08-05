@@ -1,4 +1,4 @@
-import React, { useContext, Component } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
@@ -7,7 +7,7 @@ import { range } from "../utils";
 
 import { SeatContext } from "./SeatContext";
 
-import { ReactComponent as SeatAvailable } from "../assets/seat-available.svg";
+import Seat from "./Seat";
 
 const TicketWidget = () => {
   const { state } = useContext(SeatContext);
@@ -15,38 +15,57 @@ const TicketWidget = () => {
   const numOfRows = state.numOfRows;
   const seatsPerRow = state.seatsPerRow;
 
-  // TODO: implement the loading spinner <CircularProgress />
-  // with the hasLoaded flag
+  const getSeatById = (id) => {
+    return state.seats[id];
+  };
 
   return (
-    <Wrapper>
-      {range(numOfRows).map((rowIndex) => {
-        const rowName = getRowName(rowIndex);
+    <Center>
+      {!state.hasLoaded && <CircularProgress />}
+      {state.hasLoaded && (
+        <Wrapper>
+          {range(numOfRows).map((rowIndex) => {
+            const rowName = getRowName(rowIndex);
+            return (
+              <Row key={rowIndex}>
+                <RowLabel>Row {rowName}</RowLabel>
+                {range(seatsPerRow).map((seatIndex) => {
+                  const num = getSeatNum(seatIndex);
+                  const seatId = `${rowName}-${num}`;
+                  const seat = getSeatById(seatId);
 
-        return (
-          <Row key={rowIndex}>
-            <RowLabel>Row {rowName}</RowLabel>
-            {range(seatsPerRow).map((seatIndex) => {
-              const seatId = `${rowName}-${getSeatNum(seatIndex)}`;
-              return (
-                <SeatWrapper key={seatId}>
-                  <SeatAvailable />
-                </SeatWrapper>
-              );
-            })}
-          </Row>
-        );
-      })}
-    </Wrapper>
+                  return (
+                    <SeatWrapper key={seatId}>
+                      <Seat
+                        isBooked={seat.isBooked}
+                        row={rowName}
+                        seatNum={num}
+                        price={seat.price}
+                      />
+                    </SeatWrapper>
+                  );
+                })}
+              </Row>
+            );
+          })}
+        </Wrapper>
+      )}
+    </Center>
   );
 };
+
+const Center = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+`;
 
 const Wrapper = styled.div`
   background: #eee;
   border: 1px solid #ccc;
   border-radius: 3px;
   padding: 8px;
-  margin-top: 15%;
 `;
 
 const Row = styled.div`
@@ -60,6 +79,7 @@ const Row = styled.div`
 
 const RowLabel = styled.div`
   font-weight: bold;
+  color: black;
 `;
 
 const SeatWrapper = styled.div`
